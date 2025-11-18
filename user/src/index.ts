@@ -24,7 +24,7 @@ const port = process.env.PORT;
 app.use("/api/v1", userRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("User Server!");
 });
 
 app.listen(port, () => console.log(`🌐 Server running on port http://localhost:${port}`));
