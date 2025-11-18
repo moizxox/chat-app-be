@@ -19,3 +19,13 @@ export const connectRabbitMQ = async () => {
     console.log("❌ Error Connecting RabbitMQ", error);
   }
 };
+
+export const publishToQueue = (queueName: string, message: any) => {
+  if (!channel) {
+    console.log("❌ RabbitMQ channel not initialized");
+    return;
+  }
+
+  channel.assertQueue(queueName, { durable: true });
+  channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)), { persistent: true });
+};
