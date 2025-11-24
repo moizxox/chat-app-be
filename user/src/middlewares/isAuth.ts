@@ -11,14 +11,15 @@ export const isAuth = async (req: AuthenticatedReq, res: Response, next: NextFun
   try {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) return next(new CustomError(401, "Unauthorized"));
+    if (!authHeader || !authHeader.startsWith("Bearer ")) return next(new CustomError(401, "You are Unauthorized"));
 
     const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(token as string, process.env.JWT_SECRET!) as JwtPayload;
 
     if (!decoded || !decoded.user) {
-      return next(new CustomError(401, "Unauthorized"));
+      console.log(decoded);
+      return next(new CustomError(401, "Unauthorized or user not found"));
     }
 
     req.user = decoded.user;

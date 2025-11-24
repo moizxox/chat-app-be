@@ -58,11 +58,11 @@ export const verifyUser = tryCatch(async (req, res, next) => {
     console.log("New User Created", user);
   }
 
-  const { accessToken } = generateTokens(user);
+  const { token } = generateTokens(user);
 
   res.status(200).json({
     message: "User verified successfully!",
-    accessToken,
+    token,
   });
 });
 
