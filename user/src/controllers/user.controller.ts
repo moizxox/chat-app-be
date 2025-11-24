@@ -96,3 +96,23 @@ export const updateName = tryCatch(async (req: AuthenticatedReq, res, next) => {
     user,
   });
 });
+
+export const getAllUsers = tryCatch(async (req: AuthenticatedReq, res, next) => {
+  const users = await User.find();
+  res.status(200).json({
+    message: "Users fetched successfully!",
+    users,
+  });
+});
+
+export const getAUser = tryCatch(async (req: AuthenticatedReq, res, next) => {
+  const { id } = req.params;
+  const user = await User.findById(id);
+  if (!user) {
+    return next(new CustomError(404, "User Not Found"));
+  }
+  res.status(200).json({
+    message: "User fetched successfully!",
+    user,
+  });
+});
