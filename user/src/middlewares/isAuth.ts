@@ -2,7 +2,6 @@ import type { Request, Response, NextFunction } from "express";
 import type { IUser } from "../model/User.model.js";
 import { CustomError } from "../utils/customError.js";
 import jwt, { type JwtPayload } from "jsonwebtoken";
-import User from "../model/User.model.js";
 
 export interface AuthenticatedReq extends Request {
   user?: IUser | null;
