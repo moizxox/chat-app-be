@@ -19,6 +19,7 @@ redisClient
   .catch((err) => console.log("❌ Redis connection error", err));
 
 const app = express();
+app.use(express.json());
 const port = process.env.PORT;
 
 app.use("/api/v1", userRoutes);
