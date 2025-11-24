@@ -76,3 +76,23 @@ export const myProfile = tryCatch(async (req: AuthenticatedReq, res, next) => {
     user,
   });
 });
+
+export const updateName = tryCatch(async (req: AuthenticatedReq, res, next) => {
+  const { name } = req.body;
+  if (!name) {
+    return next(new CustomError(400, "Name is required"));
+  }
+  const user = await User.findById(req.user?._id);
+  if (!user) {
+    return next(new CustomError(404, "User Not Found"));
+  }
+  user.name = name;
+  await user.save();
+
+  const { token } = generateTokens(user);
+  res.status(200).json({
+    message: "User name updated successfully!",
+    token,
+    user,
+  });
+});
