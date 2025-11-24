@@ -2,6 +2,8 @@ import { tryCatch } from "../utils/tryCatch.js";
 import { redisClient } from "../index.js";
 import { CustomError } from "../utils/customError.js";
 import { publishToQueue } from "../config/rabbitmq.js";
+import { User } from "../model/User.model.js";
+import { generateTokens } from "../utils/generateTokens.js";
 
 export const loginUser = tryCatch(async (req, res, next) => {
   const { email } = req.body;
@@ -29,5 +31,37 @@ export const loginUser = tryCatch(async (req, res, next) => {
 
   res.status(200).json({
     message: "OTP sent successfully to your email!",
+  });
+});
+
+export const verifyUser = tryCatch(async (req, res, next) => {
+  const { email, otp: enteredOtp } = req.body;
+
+  if (!email || !enteredOtp) {
+    return next(new CustomError(400, "Email and OTP are required"));
+  }
+
+  const otpKey = `otp:${email}`;
+  const storedOtp = await redisClient.get(otpKey);
+
+  if (!storedOtp || storedOtp !== enteredOtp) {
+    return next(new CustomError(400, "Invalid OTP or expired OTP"));
+  }
+
+  await redisClient.del(otpKey);
+
+  let user = await User.findOne({ email });
+  if (!user) {
+    const name = email.split("@")[0];
+    user = await User.create({ name, email });
+    console.log("New User Created", user);
+  }
+
+  const { accessToken, refreshToken } = generateTokens(user);
+
+  res.status(200).json({
+    message: "User verified successfully!",
+    accessToken,
+    refreshToken,
   });
 });
